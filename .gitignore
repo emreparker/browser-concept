@@ -41,3 +41,10 @@ next-env.d.ts
 # temporary files
 *.tmp
 *.temp
+
+# test files
+test-socket.html
+
+# screenshots
+*.png
+!public/*.png
