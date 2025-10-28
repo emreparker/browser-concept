@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Signaling server for WebRTC and room management
+  signaling:
+    build: ./server
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - collab-network
+    restart: unless-stopped
+
+  # Browser service using Puppeteer
+  browser:
+    build: ./browser-service
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - collab-network
+    restart: unless-stopped
+
+  # React client (Next.js)
+  client:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_SIGNALING_URL=ws://signaling:3001
+      - NEXT_PUBLIC_BROWSER_URL=http://browser:3002
+    depends_on:
+      - signaling
+      - browser
+    networks:
+      - collab-network
+    restart: unless-stopped
+
+networks:
+  collab-network:
+    driver: bridge
